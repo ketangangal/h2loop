@@ -1,0 +1,278 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.nav {
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.nav nav {
+  display: flex;
+  gap: 12px;
+}
+
+.nav a {
+  color: #cbd5f5;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.nav a.active,
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.nav-brand {
+  font-weight: 700;
+}
+
+.content {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px 48px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+  min-height: 160px;
+  resize: vertical;
+}
+
+input[type='file'] {
+  margin-top: 4px;
+}
+
+button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.ghost-btn {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.error {
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fecdd3;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.job-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+
+.job-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.job-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.job-meta {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.function-card {
+  margin-top: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.function-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.function-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.code-block textarea {
+  min-height: 220px;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.code-header {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.diagram {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge.warn {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.mermaid-output svg {
+  width: 100%;
+}
+
+.code-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.code-section h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #0f172a;
+}
+
+.code-section .code-block {
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.code-section pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.code-section code {
+  color: #e2e8f0;
+}
+
+.status-message {
+  color: #0f172a;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.success-message {
+  color: #0f172a;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.polling-indicator {
+  color: #1e40af;
+  font-size: 14px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 800px) {
+  .function-body {
+    grid-template-columns: 1fr;
+  }
+}
+
