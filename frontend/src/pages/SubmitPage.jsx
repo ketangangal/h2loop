@@ -2,12 +2,22 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createJob } from '../api.js';
 
+/**
+ * Job submission page for pasting or uploading C code.
+ * Creates job via REST API and navigates to detail page on success.
+ * TODO: Add syntax highlighting for code textarea.
+ * TODO: Add example code snippets for quick testing.
+ */
 export default function SubmitPage() {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  /**
+   * Read uploaded .c file into textarea.
+   * TODO: Validate file size before reading (prevent huge uploads).
+   */
   const handleFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -16,6 +26,10 @@ export default function SubmitPage() {
     reader.readAsText(file);
   };
 
+  /**
+   * Submit code to backend and navigate to job detail on success.
+   * Shows inline error if submission fails.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);

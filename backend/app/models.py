@@ -6,6 +6,11 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class JobStatus:
+    """
+    Job status constants for tracking processing stages.
+    Uses string literals for JSON serialization.
+    Legacy aliases maintained for backward compatibility.
+    """
     SUBMITTED = "submitted"
     PROCESSING = "processing"
     GENERATING_FLOWCHART = "generating_flowchart"
@@ -21,6 +26,11 @@ class JobStatus:
 
 @dataclass
 class FunctionResult:
+    """
+    Result of flowchart generation for a single function/code block.
+    - validated: whether mmdc successfully parsed the Mermaid syntax.
+    - error: optional error message if validation failed.
+    """
     name: str
     mermaid: str
     validated: bool
@@ -29,6 +39,11 @@ class FunctionResult:
 
 @dataclass
 class JobState:
+    """
+    Internal job state (in-memory store).
+    Tracks status, original code, progress, and generated flowcharts.
+    NOTE: Lost on restart; no persistence layer.
+    """
     id: str
     code: str
     status: str = JobStatus.QUEUED
@@ -41,6 +56,7 @@ class JobState:
 
 
 class CreateJobRequest(BaseModel):
+    """Request payload for creating a new job (POST /api/jobs)."""
     code: str
 
 
@@ -52,6 +68,10 @@ class FunctionResultResponse(BaseModel):
 
 
 class JobSummaryResponse(BaseModel):
+    """
+    Job summary for list endpoints; uses camelCase aliases for frontend.
+    Does not include code or full flowchart results.
+    """
     model_config = ConfigDict(populate_by_name=True)
 
     id: str
@@ -63,12 +83,17 @@ class JobSummaryResponse(BaseModel):
 
 
 class JobDetailResponse(JobSummaryResponse):
+    """
+    Full job detail including code and generated flowcharts.
+    Used by GET /api/jobs/{id}.
+    """
     code: str
     error: Optional[str] = None
     functions: List[FunctionResultResponse] = Field(default_factory=list)
 
 
 def to_summary(job: JobState) -> JobSummaryResponse:
+    """Convert internal JobState to API summary response."""
     return JobSummaryResponse(
         id=job.id,
         status=job.status,
@@ -80,6 +105,7 @@ def to_summary(job: JobState) -> JobSummaryResponse:
 
 
 def to_detail(job: JobState) -> JobDetailResponse:
+    """Convert internal JobState to full API detail response."""
     return JobDetailResponse(
         **to_summary(job).model_dump(),
         code=job.code,

@@ -7,6 +7,10 @@ from langchain_openai import AzureChatOpenAI
 
 
 def extract_mermaid(text: str) -> str:
+    """
+    Extract Mermaid diagram from markdown code fence.
+    Falls back to returning raw text if no fence found.
+    """
     fence = re.search(r"```(?:mermaid)?\s*([\s\S]*?)```", text, re.IGNORECASE)
     if fence:
         return fence.group(1).strip()
@@ -20,12 +24,20 @@ class LLMClient:
     """
 
     def __init__(self):
+        """
+        Initialize LLM client from environment variables.
+        Falls back to stub mode if Azure credentials not configured.
+        """
         self.deployment = os.getenv("AZURE_DEPLOYMENT")
         self.endpoint = os.getenv("AZURE_API_ENDPOINT")
         self.api_key = os.getenv("AZURE_API_KEY")
         self.api_version = os.getenv("AZURE_API_VERSION", "2024-06-01")
 
     def _client(self) -> Optional[AzureChatOpenAI]:
+        """
+        Lazy Azure OpenAI client creation.
+        Returns None if credentials missing (triggers stub mode).
+        """
         if not (self.deployment and self.endpoint and self.api_key):
             return None
         return AzureChatOpenAI(
@@ -37,7 +49,14 @@ class LLMClient:
         )
 
     async def generate_from_code(self, code: str) -> str:
-        """Generate Mermaid flowchart from entire C code (async)"""
+        """
+        Generate Mermaid flowchart from C code using Azure OpenAI (async).
+        Returns stub flowchart if credentials not configured.
+        Sanitizes quotes from output to prevent Mermaid parse errors.
+        TODO: Add timeout to prevent indefinite waits on slow LLM responses.
+        TODO: Add cost tracking or usage limits if exposing publicly.
+        TODO: Consider using ast-grep to pre-parse C code structure.
+        """
         prompt = textwrap.dedent(
             f"""
             Analyze the following C code and produce a Mermaid flowchart representing the program flow.
@@ -80,7 +99,10 @@ class LLMClient:
             raise RuntimeError(f"LLM call failed: {exc}") from exc
     
     def _sanitize_mermaid(self, mermaid_text: str) -> str:
-        """Remove quotes from inside node labels to prevent Mermaid parse errors"""
+        """
+        Remove quotes from inside node labels to prevent Mermaid parse errors.
+        Applies regex twice per line to handle multiple quotes.
+        """
         lines = []
         for line in mermaid_text.split('\n'):
             # Remove quotes from inside brackets and parentheses
@@ -93,7 +115,10 @@ class LLMClient:
         return '\n'.join(lines)
 
     def stub_flowchart(self) -> str:
-        """Fallback stub when LLM is not configured"""
+        """
+        Fallback stub when LLM is not configured.
+        Returns a minimal valid Mermaid flowchart for testing.
+        """
         return textwrap.dedent(
             """
             flowchart TD

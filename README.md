@@ -1,78 +1,68 @@
 # H2Loop - C Code Flowchart Generator
+Overview of the system that turns C code into Mermaid flowcharts.
 
-Full-stack application that accepts C code and generates Mermaid flowcharts using LLM. Built with FastAPI (async) + React, with Docker support.
+## Architecture (brief)
+- Backend: FastAPI (async). In-memory queue + single worker; jobs are lost on restart. Mermaid validation via `mmdc`. LLM generates diagrams.
+- Frontend: React + Vite. Uses REST polling for status. WebSocket path exists in codebase but is currently disabled (see TODOs).
+- Deployment: Dockerfiles for backend/frontend; docker-compose ties them together.
 
 ## Features
-
 | Feature | Status |
 |---------|--------|
-| Fully Async Backend | ✅ |
-| Live Status Updates | ✅ |
-| Auto-polling | ✅ |
-| Original Code Display | ✅ |
-| Mermaid Validation | ✅ |
+| Async backend + worker | ✅ |
+| Job create/list/detail APIs | ✅ |
+| Status updates via HTTP polling | ✅ |
+| WebSocket live updates | ⚪ TODO: wire endpoint + broadcast |
+| Mermaid validation | ✅ |
+| Dockerized frontend/backend | ✅ |
+| Health/Live probes | ✅ |
+
+## APIs
+- POST `/api/jobs` — submit code.
+- GET `/api/jobs` — list jobs.
+- GET `/api/jobs/{id}` — job detail.
+- GET `/health` — basic health probe.
+- GET `/live` — lightweight liveness.
+- WebSocket `/ws/jobs/{id}` — TODO: currently disabled; manager exists, endpoint commented.
 
 ## Setup
-
-### Automated Setup (Recommended)
-
+### Automated
 ```bash
 ./setup.sh
-./run-all.sh  # Starts both backend and frontend
+./run-all.sh   # backend + frontend
 ```
 
-### Manual Setup
+### Manual
+Prereqs: Python 3.8+, Node 18+, npm
 
-**Prerequisites:**
-- Python 3.8+
-- Node.js 18+
-- npm
-
-**Backend:**
+Backend:
 ```bash
 cd backend
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-```
-
-**Configuration (Optional):**
-
-Create `backend/.env`:
-```env
-AZURE_API_KEY=your-api-key-here
-AZURE_API_ENDPOINT=https://your-resource-name.openai.azure.com/
-AZURE_DEPLOYMENT=your-deployment-name
-AZURE_API_VERSION=2024-06-01
-```
-
-**Running:**
-
-Backend:
-```bash
-cd backend
-source .venv/bin/activate
 python main.py
 ```
 
 Frontend:
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-**Docker:**
+### Docker
 ```bash
 docker-compose up --build
 ```
 
-### Access
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
+## Access
+- Frontend: http://localhost:5173 (dev) or http://localhost:3000 (docker)
+- Backend API: http://localhost:8000
+- Docs: http://localhost:8000/docs
+
+## Notes / TODOs
+- WebSocket push is not active: uncomment `/ws/jobs/{id}` in `backend/main.py` and `broadcast_job` calls in `app/services.py`, then add a frontend WebSocket client.
+- Jobs are in-memory; restart will drop them. Persist if durability is needed.
+- LLM prompt/tooling and ast-grep integration are not documented/absent; add if required by specs.
+

@@ -3,11 +3,21 @@ import { useParams } from 'react-router-dom';
 import { fetchJob } from '../api.js';
 import MermaidViewer from '../components/MermaidViewer.jsx';
 
+/**
+ * Job detail page showing status, original code, and generated flowcharts.
+ * Uses HTTP polling (2s interval) for live updates while job is active.
+ * TODO: Replace polling with WebSocket subscription for real-time pushes.
+ * TODO: Add download button to export Mermaid/SVG diagrams.
+ */
 export default function JobDetailPage() {
   const { jobId } = useParams();
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
 
+  /**
+   * Fetch latest job state from backend.
+   * Called on mount and by polling interval.
+   */
   const load = async () => {
     try {
       const data = await fetchJob(jobId);
@@ -22,7 +32,8 @@ export default function JobDetailPage() {
     load();
   }, [jobId]);
 
-  // Auto-polling: refresh every 2 seconds while job is active
+  // Auto-polling: refresh every 2 seconds while job is active.
+  // TODO: Replace with WebSocket push once backend WS is enabled.
   useEffect(() => {
     const activeStatuses = ['submitted', 'queued', 'processing', 'in_progress', 'generating_flowchart', 'validating'];
     const isActive = activeStatuses.includes(job?.status);
@@ -33,6 +44,10 @@ export default function JobDetailPage() {
     return () => clearInterval(interval);
   }, [job?.status, jobId]);
 
+  /**
+   * Map job status to user-friendly display text with emoji.
+   * Returns default for unknown statuses.
+   */
   const getStatusDisplay = (status) => {
     const statusMap = {
       'submitted': { emoji: '📝', text: 'Submitted', message: 'Job has been submitted and queued for processing' },

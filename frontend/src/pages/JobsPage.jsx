@@ -2,11 +2,22 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchJobs } from '../api.js';
 
+/**
+ * Job list page showing all jobs with basic status/progress.
+ * Auto-refreshes every 4 seconds to show updated statuses.
+ * TODO: Add filtering by status (active/completed/failed).
+ * TODO: Add pagination if job count grows large.
+ * TODO: Replace polling with WebSocket subscription for live list updates.
+ */
 export default function JobsPage() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  /**
+   * Fetch all jobs from backend.
+   * Called on mount and by polling interval (4s).
+   */
   const load = async () => {
     try {
       const data = await fetchJobs();
@@ -21,6 +32,7 @@ export default function JobsPage() {
 
   useEffect(() => {
     load();
+    // TODO: Use WebSocket or server-sent events for push updates; polling keeps it simple for now.
     const interval = setInterval(load, 4000);
     return () => clearInterval(interval);
   }, []);
