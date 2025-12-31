@@ -11,7 +11,6 @@ dist/
 build/
 .git/
 .gitignore
-.env
 *.md
 .pytest_cache/
 .coverage
